@@ -1,0 +1,23 @@
+# ⚠️ COMPTE PROFESSEUR EN ATTENTE
+
+Le compte professeur a été créé mais doit être validé par l'admin.
+
+## 🔧 SOLUTION RAPIDE
+
+### Étape 1 : Connectez-vous en tant qu'Admin
+1. Allez sur http://localhost:3000/login
+2. Cliquez sur "Remplir" pour Admin
+3. Connectez-vous (admin@univ.fr / admin123)
+
+### Étape 2 : Validez le compte Professeur
+1. Allez dans l'onglet **"Utilisateurs"**
+2. Trouvez **Marie Dubois (prof@univ.fr)**
+3. Cliquez sur le bouton **"Activer le compte"** (icône verte ✓)
+
+### Étape 3 : Testez la connexion Professeur
+1. Déconnectez-vous
+2. Retournez sur /login
+3. Cliquez sur "Remplir" pour Professeur
+4. Connectez-vous (prof@univ.fr / prof123)
+
+Ça devrait fonctionner maintenant ! ✅

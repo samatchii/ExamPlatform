@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        button {
+            background: #0056d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #004bb5;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test de Connexion Backend</h1>
+    
+    <div class="test-box">
+        <h2>Informations</h2>
+        <p><strong>Backend URL:</strong> http://localhost:8080/api</p>
+        <p><strong>Frontend URL:</strong> http://localhost:3000</p>
+    </div>
+
+    <div class="test-box">
+        <h2>Tests de Connexion</h2>
+        <button onclick="testBackend()">Test 1: GET /api/exams</button>
+        <button onclick="testAuth()">Test 2: GET /api/auth (doit échouer)</button>
+        <button onclick="testSubjects()">Test 3: GET /api/subjects</button>
+        <button onclick="testScheduledExams()">Test 4: GET /api/scheduled-exams</button>
+        <button onclick="clearResults()">Effacer</button>
+    </div>
+
+    <div class="test-box">
+        <h2>Résultats</h2>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+        const resultsDiv = document.getElementById('results');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : '';
+            resultsDiv.innerHTML += `<p class="${className}">[${timestamp}] ${message}</p>`;
+        }
+
+        function clearResults() {
+            resultsDiv.innerHTML = '';
+        }
+
+        async function testBackend() {
+            log('🔄 Test GET /api/exams...');
+            try {
+                const response = await fetch(`${API_URL}/exams`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Succès! Status: ${response.status}`, 'success');
+                    log(`Données reçues: ${JSON.stringify(data).substring(0, 200)}...`);
+                } else {
+                    log(`❌ Erreur HTTP: ${response.status} ${response.statusText}`, 'error');
+                    const text = await response.text();
+                    log(`Réponse: ${text.substring(0, 200)}`);
+                }
+            } catch (error) {
+                log(`❌ Erreur réseau: ${error.message}`, 'error');
+                log('💡 Le backend Spring Boot n\'est peut-être pas démarré sur http://localhost:8080');
+            }
+        }
+
+        async function testAuth() {
+            log('🔄 Test GET /api/auth (doit retourner 404 ou 401)...');
+            try {
+                const response = await fetch(`${API_URL}/auth`, {
+                    method: 'GET',
+                });
+                log(`Status: ${response.status} - ${response.statusText}`);
+            } catch (error) {
+                log(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSubjects() {
+            log('🔄 Test GET /api/subjects...');
+            try {
+                const response = await fetch(`${API_URL}/subjects`);
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Succès! ${data.length} matières trouvées`, 'success');
+                } else {
+                    log(`❌ Status: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        async function testScheduledExams() {
+            log('🔄 Test GET /api/scheduled-exams...');
+            try {
+                const response = await fetch(`${API_URL}/scheduled-exams`);
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Succès! ${data.length} examens programmés`, 'success');
+                } else {
+                    log(`❌ Status: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Erreur: ${error.message}`, 'error');
+            }
+        }
+
+        // Test automatique au chargement
+        window.onload = () => {
+            log('📌 Page de test chargée');
+            log('👉 Cliquez sur les boutons ci-dessus pour tester la connexion au backend');
+            log('');
+            
+            // Test automatique après 1 seconde
+            setTimeout(() => {
+                log('🤖 Test automatique...');
+                testBackend();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
